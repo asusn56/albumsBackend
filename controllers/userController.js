@@ -105,19 +105,21 @@ const getUserById = async(req, res) => {
 const updateUser = async(req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, password } = req.body;
+        
+        const { username, email, password } = req.body;  
 
         const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
 
         const updatedUser = await User.findByIdAndUpdate(
-            id, { name, email, password: hashedPassword }, { new: true }
+            id, { username, email, password: hashedPassword }, { new: true }
         );
 
         if (!updatedUser) {
             return res.status(404).send({ error: 'User not found' });
         }
 
-        res.send(updatedUser);
+        // res.send(updatedUser);
+        res.json(updatedUser);
     } catch (error) {
         res.status(500).send(error);
     }
