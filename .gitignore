@@ -1,0 +1,6 @@
+/.env
+/.vscode
+/debug.js
+/eslint.config.mjs
+/node_modules
+/npm-cache
