@@ -8,19 +8,17 @@ const getCart = async (req, res) => {
   
   try {
     if (!req.user) {
-      return res.status(401).send({ message: 'User not authenticated' });
+      return res.status(401).send({ message: 'USer Auth' });
     }
-    let cart = await Cart.findOne({ user: req.user._id }).populate({
+    let cart = await Cart.findOne({ user: req.user._id })
+    .populate({
       path: 'items.albumFormat',
-      populate:[
-        {
-          path: 'albumType',
-          select: 'name'
-        },
-        { path: 'album', select: 'title' }
+      populate: [
+        { path: 'albumType', select: 'name' },
+        { path: 'album',     select: 'title artist' }
       ]
     });
-    // .populate("items.albumFormat");
+
    
     if (!cart) {
       cart = new Cart({
@@ -43,7 +41,7 @@ const addToCart = async (req, res) => {
   if (!req.user) {    
     console.log("BAD USER");
     
-    return res.status(401).send({ message: 'User not authenticated' });
+    return res.status(401).send({ message: 'No User Auth' });
   }
   
   const { albumFormatId, quantity } = req.body;
@@ -89,13 +87,16 @@ const updateQuantity = async (req, res) => {
     if (!item) return res.status(404).json({ message: "Item not found" });
     item.quantity = quantity;
     
-    
+ 
     await cart.populate({
       path: 'items.albumFormat',
-      populate: {
-        path: 'album',
-        model: 'Album',
-      },
+      populate:[
+        {
+          path: 'albumType',
+          select: 'name'
+        },
+        { path: 'album', select: 'title' }
+      ]
     });
     
     res.status(200).json(cart)
